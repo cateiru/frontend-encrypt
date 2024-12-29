@@ -10,24 +10,44 @@
   <body>
     <h1>フロントエンド暗号化 or 復号化の PoC</h1>
     <div class="form">
-        <textarea class="js-encrypt-form" placeholder="暗号化したい文字列を入力" ></textarea>
+        <div class="with-binary js-with-binary">
+            <div>
+                <textarea class="js-encrypt-form js-input" placeholder="暗号化したい文字列を入力" ></textarea>
+                <span class="count js-count">0</span>
+            </div>
+            <div>
+                <pre class="js-binary"></pre>
+            </div>
+        </div>
         <div class="button-group">
             <button class="button-primary">AES (Web Crypto API) で暗号化</button>
             <button class="button-primary js-xor-submit">OXRで暗号化</button>
+            <button class="button-primary js-xor-longkey-submit">OXRで暗号化（Key長文）</button>
             <button class="button-primary js-base64-submit">Base64で暗号化</button>
         </div>
+        <p class="time js-time-encrypt"></p>
     </div>
 
     <div class="form">
-        <textarea class="js-decrypt-form" placeholder="復号化したい文字列を入力" ></textarea>
+        <div class="with-binary js-with-binary">
+            <div>
+                <textarea class="js-decrypt-form js-input" placeholder="復号化したい文字列を入力" ></textarea>
+                <span class="count js-count">0</span>
+            </div>
+            <div>
+                <pre class="js-binary"></pre>
+            </div>
+        </div>
         <div class="button-group">
             <button class="button-primary js-decrypt-submit">AES (Web Crypto API) で復号化</button>
             <button class="button-primary js-xor-decrypt-submit">OXRで復号化</button>
+            <button class="button-primary js-xor-decrypt-longkey-submit">OXRで復号化（Key長文）</button>
             <button class="button-primary js-base64-decrypt-submit">Base64で復号化</button>
         </div>
+        <p class="time js-time-decrypt"></p>
     </div>
 
-    <pre class="decrypt-result js-decrypt-result">ここに複合した結果が表示されます</pre>
+    <pre class="decrypt-result js-decrypt-result">ここに復号した結果が表示されます</pre>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

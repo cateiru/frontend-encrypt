@@ -1,5 +1,7 @@
+import { Base64 } from "./crypt/base64";
 import { Xor } from "./crypt/xor";
-import { write } from "./tools";
+import { timeMeasure, write } from "./tools";
+import { withBinary } from "./withBinary";
 
 function events() {
   const encryptInputElement = document.querySelector(".js-encrypt-form");
@@ -15,10 +17,12 @@ function events() {
   const xorEncryptButtonElement = document.querySelector(".js-xor-submit");
   if (xorEncryptButtonElement) {
     xorEncryptButtonElement.addEventListener("click", () => {
-      const xor = new Xor("key");
+      timeMeasure(".js-time-encrypt", () => {
+        const xor = new Xor("key");
 
-      const encryptedText = xor.encrypt(encryptInputElement.value);
-      write(decryptInputElement, btoa(encodeURIComponent(encryptedText)));
+        const encryptedText = xor.encrypt(encryptInputElement.value);
+        write(decryptInputElement, encryptedText);
+      });
     });
   }
 
@@ -28,12 +32,46 @@ function events() {
   );
   if (xorDecryptButtonElement) {
     xorDecryptButtonElement.addEventListener("click", () => {
-      const xor = new Xor("key");
+      timeMeasure(".js-time-decrypt", () => {
+        const xor = new Xor("key");
 
-      const base64Value = decodeURIComponent(atob(decryptInputElement.value));
+        const decryptedText = xor.decrypt(decryptInputElement.value);
+        write(".js-decrypt-result", decryptedText);
+      });
+    });
+  }
 
-      const decryptedText = xor.decrypt(base64Value);
-      write(".js-decrypt-result", decryptedText);
+  // XOR 暗号Key長文
+  const xorEncryptLoginKeyButtonElement = document.querySelector(
+    ".js-xor-longkey-submit"
+  );
+  if (xorEncryptLoginKeyButtonElement) {
+    xorEncryptLoginKeyButtonElement.addEventListener("click", () => {
+      timeMeasure(".js-time-encrypt", () => {
+        const xor = new Xor(
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        const encryptedText = xor.encrypt(encryptInputElement.value);
+        write(decryptInputElement, encryptedText);
+      });
+    });
+  }
+
+  // XOR 復号Key長文
+  const xorDecryptLongKeyButtonElement = document.querySelector(
+    ".js-xor-decrypt-longkey-submit"
+  );
+  if (xorDecryptLongKeyButtonElement) {
+    xorDecryptLongKeyButtonElement.addEventListener("click", () => {
+      timeMeasure(".js-time-decrypt", () => {
+        const xor = new Xor(
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        const decryptedText = xor.decrypt(decryptInputElement.value);
+        write(".js-decrypt-result", decryptedText);
+      });
     });
   }
 
@@ -42,10 +80,12 @@ function events() {
     document.querySelector(".js-base64-submit");
   if (base64EncryptButtonElement) {
     base64EncryptButtonElement.addEventListener("click", () => {
-      write(
-        decryptInputElement,
-        btoa(encodeURIComponent(encryptInputElement.value))
-      );
+      timeMeasure(".js-time-encrypt", () => {
+        const b = new Base64();
+
+        const encryptedText = b.encrypt(encryptInputElement.value);
+        write(decryptInputElement, encryptedText);
+      });
     });
   }
 
@@ -55,14 +95,20 @@ function events() {
   );
   if (base64DecryptButtonElement) {
     base64DecryptButtonElement.addEventListener("click", () => {
-      const base64Value = decodeURIComponent(atob(decryptInputElement.value));
-      write(".js-decrypt-result", base64Value);
+      timeMeasure(".js-time-decrypt", () => {
+        const b = new Base64();
+
+        const decryptedText = b.decrypt(decryptInputElement.value);
+
+        write(".js-decrypt-result", decryptedText);
+      });
     });
   }
 }
 
 function main() {
   events();
+  withBinary();
 }
 
 main();
